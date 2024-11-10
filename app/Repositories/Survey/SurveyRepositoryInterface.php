@@ -10,6 +10,7 @@ interface SurveyRepositoryInterface
 {
     public function index(): Collection;
     public function create(array $data): Survey;
+    public function update(array $data, $id): array;
     public function destroy($id): bool;
     public function order($order): bool;
 }

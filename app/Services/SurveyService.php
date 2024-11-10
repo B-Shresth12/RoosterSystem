@@ -9,7 +9,8 @@ class SurveyService
 
     function __construct(protected SurveyRepositoryInterface $surveyRepository) {}
 
-    function getSurvey(){
+    function getSurvey()
+    {
         return $this->surveyRepository->index();
     }
 
@@ -21,5 +22,10 @@ class SurveyService
     function orderSurvey($order)
     {
         return $this->surveyRepository->order($order);
+    }
+
+    function updateSurvey($data, $id)
+    {
+        return $this->surveyRepository->update(data: $data, id: $id);
     }
 }

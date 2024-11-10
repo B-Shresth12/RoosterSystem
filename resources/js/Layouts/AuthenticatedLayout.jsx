@@ -16,10 +16,8 @@ export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
 
     useEffect(() => {
-        console.log(props);
         const flash = props.flash;
         if (flash) {
-            console.log(flash);
             if (flash?.success) {
                 toast.success(flash.success);
             }

@@ -2,13 +2,13 @@ import DangerButton from '@/Components/DangerButton';
 import PrimaryLinkButton from '@/Components/PrimaryLinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { arrayMatch } from '@/utils/Helper';
-import { Head, router, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
-import { toast } from 'react-toastify';
 
 const Index = ({ surveys }) => {
     const [lists, setLists] = useState(surveys);
+    console.table(lists);
     const createSurveyLink = route('admin.surveys.create');
 
     const handleOrder = async (state) => {
@@ -21,6 +21,10 @@ const Index = ({ surveys }) => {
                 setLists(state);
             } catch (error) {}
         }
+    };
+
+    const getyQuestionURL = (id) => {
+        return route('admin.questions.index', id);
     };
 
     const handleDelete = async (id) => {
@@ -80,13 +84,21 @@ const Index = ({ surveys }) => {
                                                     <i className="fa fa-bars"></i>
                                                 </div>
                                                 <div>{list.title}</div>
+                                                <div
+                                                    className={`rounded-lg border px-2 py-1 ${list.is_active ? 'border-green-700 bg-green-700' : 'border-red-700 bg-red-700'}`}
+                                                >
+                                                    {list.is_active
+                                                        ? 'Active'
+                                                        : 'Expired'}
+                                                </div>
                                             </div>
                                             <div className="">
                                                 <div className="flex items-center justify-center gap-2">
                                                     <PrimaryLinkButton
-                                                        href={geteditURL(
+                                                        href={getyQuestionURL(
                                                             list.id,
                                                         )}
+                                                        aria-label={`Questions`}
                                                     >
                                                         <i className="fa fa-bars"></i>
                                                     </PrimaryLinkButton>

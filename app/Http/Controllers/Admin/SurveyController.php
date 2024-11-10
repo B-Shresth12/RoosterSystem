@@ -19,7 +19,7 @@ class SurveyController extends Controller
     public function index()
     {
         $surveys = $this->surveyService->getSurvey();
-        return Inertia::render('Survey/Index',compact('surveys'));
+        return Inertia::render('Survey/Index', compact('surveys'));
     }
 
     /**
@@ -56,7 +56,7 @@ class SurveyController extends Controller
     public function edit(string $id)
     {
         $survey = Survey::find($id);
-        if(!@$survey){
+        if (!@$survey) {
             return back()->with('error', 'Survey not Found');
         }
 
@@ -66,9 +66,15 @@ class SurveyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SurveyRequest $request, string $id)
     {
-        //
+        $data = $request->validated();
+        $status = $this->surveyService->updateSurvey($data,  $id);
+        if ($status['status']) {
+            return to_route('admin.surveys.index')->with('success', 'Survey has been updated');
+        }
+
+        return back()->with('error', $status['message']);
     }
 
     /**
@@ -86,7 +92,7 @@ class SurveyController extends Controller
      */
     function order(Request $request)
     {
-        $order= $request->input('order');
+        $order = $request->input('order');
 
         $status = $this->surveyService->orderSurvey($order);
         return to_route('admin.surveys.index')->with('success', "Survey Sorted");

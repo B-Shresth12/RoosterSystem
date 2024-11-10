@@ -10,7 +10,7 @@ const Navigation = () => {
             </NavLink>
             <NavLink
                 href={route('admin.surveys.index')}
-                active={route().current('survey.*')}
+                active={route().current('surveys.*')}
             >
                 Survey
             </NavLink>

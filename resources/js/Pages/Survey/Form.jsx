@@ -8,26 +8,41 @@ import TextArea from '@/Components/TextArea';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
-import { toast } from 'react-toastify';
 
 const Form = ({ survey = null }) => {
     const goBackLink = route('admin.surveys.index');
     const edit = survey ? true : false;
-    const { data, setData, post, errors, processing, recentlySuccessful } =
-        useForm({
-            title: survey.title ?? '',
-            description: survey.description ?? '',
-            active_status: survey.description ?? true,
-        });
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        errors,
+        processing,
+        recentlySuccessful,
+    } = useForm({
+        title: survey?.title ?? '',
+        description: survey?.description ?? '',
+        active_status: survey?.is_active ?? true,
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await post(route('admin.surveys.store', data));
-            toast.success('Survey Created Successfully');
+            if (edit) {
+                await patch(route('admin.surveys.update', survey.id), data);
+            } else {
+                await post(route('admin.surveys.store', data));
+            }
+            console.error(errors);
         } catch (error) {
-            toast.error('Failed to create survey. Please try again');
+            console.error(error);
         }
+    };
+
+    const handleChange = (e) => {
+        const { checked } = e.target;
+        setData({ ...data, active_status: checked });
     };
 
     return (
@@ -92,13 +107,19 @@ const Form = ({ survey = null }) => {
                                         <div className="flex items-center justify-center gap-3">
                                             <Checkbox
                                                 className="size-5"
+                                                id="active_status"
                                                 checked={data.active_status}
+                                                onChange={handleChange}
                                             />
                                             <InputLabel
                                                 htmlFor="active_status"
                                                 value="Active Status"
                                             />
                                         </div>
+                                        <InputError
+                                            message={errors.active_status}
+                                            className="mb-2"
+                                        />
                                     </div>
                                     <div className="col-span-12 mb-2">
                                         <InputLabel
@@ -124,13 +145,20 @@ const Form = ({ survey = null }) => {
                                     </div>
                                     <div className="col-span-12">
                                         <div className="flex justify-between">
-                                            <DangerLinkButton href={goBackLink}>
+                                            <DangerLinkButton
+                                                href={goBackLink}
+                                                disabled={processing}
+                                            >
                                                 <i className="fa fa-times"></i>
                                                 &nbsp;Cancel
                                             </DangerLinkButton>
-                                            <PrimaryButton href={goBackLink}>
+                                            <PrimaryButton
+                                                href={goBackLink}
+                                                disabled={processing}
+                                            >
                                                 <i className="fa fa-upload"></i>
-                                                &nbsp;{!edit? 'Create' : 'Edit'}
+                                                &nbsp;
+                                                {!edit ? 'Create' : 'Edit'}
                                             </PrimaryButton>
                                         </div>
                                     </div>
