@@ -10,47 +10,48 @@ import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-const Form = ({ survey = null }) => {
-    const goBackLink = route('admin.surveys.index');
-    const edit = survey ? true : false;
-    const {
-        data,
-        setData,
-        post,
-        patch,
-        errors,
-        processing,
-        recentlySuccessful,
-    } = useForm({
-        title: survey?.title ?? '',
-        description: survey?.description ?? '',
-        active_status: survey?.is_active ?? true,
-    });
+const SectionForm = ({ surveyId, question = null }) => {
+    const goBackLink = route('admin.questions.index', surveyId);
+    const edit = question ? true : false;
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (edit) {
-                await patch(route('admin.surveys.update', survey.id), data);
-            } else {
-                await post(route('admin.surveys.store', data));
-            }
-            console.error(errors);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const { data, setData, post, patch, errors, processing } = useForm({
+        section_name: question?.text ?? '',
+        section_description: question?.description ?? '',
+        active_status: question?.status ?? true,
+    });
 
     const handleChange = (e) => {
         const { checked } = e.target;
         setData({ ...data, active_status: checked });
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        try {
+            if (edit)
+                patch(
+                    route('admin.questions.update', {
+                        surveyId: surveyId,
+                        question: question.id,
+                        mode: 'section',
+                    }),
+                    data,
+                );
+            else
+                post(
+                    route('admin.questions.store', {
+                        surveyId: surveyId,
+                        mode: 'section',
+                    }),
+                    data,
+                );
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
-        <AuthenticatedLayout
-            header={<Header title={`${!edit ? 'Create' : 'Edit'} Survey`} />}
-        >
-            <Head title={`${!edit ? 'Create' : 'Edit'} Survey`} />
+        <AuthenticatedLayout header={<Header title={`Add Question Section`} />}>
+            <Head title={`Add Question Section`} />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
@@ -59,19 +60,23 @@ const Form = ({ survey = null }) => {
                                 <div className="flex justify-between">
                                     <div>
                                         <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                            {!edit ? 'Create' : 'Edit'} Survey
+                                            {`${!edit ? 'Add' : 'Edit'}`}{' '}
+                                            Question Section
                                         </h2>
                                         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                            {!edit ? 'Create' : 'Edit'} Survey
+                                            {`${!edit ? 'Add' : 'Edit'}`}{' '}
+                                            Question Section to organize a group
+                                            of questions
                                         </p>
                                     </div>
-                                    <PrimaryLinkButton href={goBackLink}>
-                                        <i className="fa fa-angle-double-left"></i>
-                                        &nbsp;Go Back
-                                    </PrimaryLinkButton>
+                                    <div className="flex flex-row gap-2">
+                                        <PrimaryLinkButton href={goBackLink}>
+                                            <i className="fa fa-angle-double-left"></i>
+                                            &nbsp;Go Back
+                                        </PrimaryLinkButton>
+                                    </div>
                                 </div>
                             </header>
-
                             <form
                                 className="mt-6 space-y-6"
                                 onSubmit={handleSubmit}
@@ -79,27 +84,31 @@ const Form = ({ survey = null }) => {
                                 <div className="mb-3 grid grid-cols-12 items-center justify-center gap-3">
                                     <div className="col-span-10 mb-2">
                                         <InputLabel
-                                            htmlFor="title"
-                                            value="Survey Title"
+                                            htmlFor="section_name"
+                                            value="Section Name"
                                             required={true}
                                         />
                                         <TextInput
-                                            id="title"
+                                            id="section_name"
                                             className="mt-1 block w-full"
-                                            value={data.title}
+                                            defaultValue={data.section_name}
                                             onChange={(e) =>
-                                                setData('title', e.target.value)
+                                                setData(
+                                                    'section_name',
+                                                    e.target.value,
+                                                )
                                             }
                                             required
                                             isFocused
-                                            autoComplete="title"
-                                            placeholder="Enter Survey Title"
+                                            autoComplete="section_name"
+                                            placeholder="Enter Section Name"
                                         />
                                         <InputError
                                             message={errors.title}
                                             className="mb-2"
                                         />
                                     </div>
+
                                     <div className="col-span-2 mb-2">
                                         <div className="flex items-center justify-center gap-3">
                                             <Checkbox
@@ -118,26 +127,34 @@ const Form = ({ survey = null }) => {
                                             className="mb-2"
                                         />
                                     </div>
+
                                     <div className="col-span-12 mb-2">
                                         <InputLabel
-                                            htmlFor="description"
-                                            value="Survey Description"
+                                            htmlFor="section_description"
+                                            value="Section Description"
+                                            required={false}
                                         />
                                         <TextArea
-                                            id="description"
+                                            id="section_description"
                                             className="mt-1 block w-full"
-                                            value={data.description}
+                                            defaultValue={
+                                                data.section_description
+                                            }
                                             onChange={(e) =>
                                                 setData(
-                                                    'description',
+                                                    'section_description',
                                                     e.target.value,
                                                 )
                                             }
                                             required
                                             isFocused
-                                            autoComplete="description"
-                                            placeholder="Enter Survey Description..."
+                                            autoComplete="section_description"
+                                            placeholder="Enter Section Description"
                                             rows={5}
+                                        />
+                                        <InputError
+                                            message={errors.title}
+                                            className="mb-2"
                                         />
                                     </div>
                                     <div className="col-span-12">
@@ -154,7 +171,7 @@ const Form = ({ survey = null }) => {
                                             >
                                                 <i className="fa fa-upload"></i>
                                                 &nbsp;
-                                                {!edit ? 'Create' : 'Edit'}
+                                                {!edit ? 'Add' : 'Edit'}
                                             </PrimaryButton>
                                         </div>
                                     </div>
@@ -168,4 +185,4 @@ const Form = ({ survey = null }) => {
     );
 };
 
-export default Form;
+export default SectionForm;

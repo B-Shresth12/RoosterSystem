@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Question\QuestionRepository;
+use App\Repositories\Question\QuestionRepositoryInterface;
 use App\Repositories\Survey\SurveyRepository;
 use App\Repositories\Survey\SurveyRepositoryInterface;
 use Illuminate\Support\Facades\Vite;
@@ -14,7 +16,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(SurveyRepositoryInterface::class, SurveyRepository::class);
+        $this->app->bind(
+            SurveyRepositoryInterface::class,
+            SurveyRepository::class
+        );
+        $this->app->bind(
+            QuestionRepositoryInterface::class,
+            QuestionRepository::class
+        );
     }
 
     /**

@@ -1,4 +1,5 @@
 import DangerButton from '@/Components/DangerButton';
+import Header from '@/Components/Header';
 import PrimaryLinkButton from '@/Components/PrimaryLinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { arrayMatch } from '@/utils/Helper';
@@ -43,11 +44,7 @@ const Index = ({ surveys }) => {
     };
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Survey Management
-                </h2>
-            }
+            header={<Header title={`Survey Management`} />}
         >
             <Head title="Survey Management" />
             <div className="py-12">

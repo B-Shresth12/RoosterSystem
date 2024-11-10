@@ -36,10 +36,13 @@ class SurveyController extends Controller
     public function store(SurveyRequest $request)
     {
         $data = $request->validated();
-        $survey = $this->surveyService->createSurvey($data);
+        $status = $this->surveyService->createSurvey($data);
 
-        // return response()->json(true);
-        return to_route('admin.questions.index', $survey->id)->with('questions', $survey->questions);
+        if ($status['status']) {
+            return to_route('admin.questions.index', $status['survey']->id)->with('success', 'Survey has been created');
+        }
+
+        return back()->with('error', $status['message']);
     }
 
     /**

@@ -27,7 +27,7 @@ Route::prefix('admin')->group(function () {
     Route::namespace('App\Http\Controllers\Admin')->name('admin.')->middleware(['auth'])->group(function(){
         Route::resource('surveys', 'SurveyController');
         Route::post('surveys/order', 'SurveyController@order')->name('surveys.order');
-        Route::prefix('surveys/{id}')->group(function(){
+        Route::prefix('surveys/{surveyId}')->group(function(){
             Route::resource('questions', 'QuestionController');
         });
     });

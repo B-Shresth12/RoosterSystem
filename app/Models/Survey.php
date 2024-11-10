@@ -24,8 +24,8 @@ class Survey extends Model
         'is_active' => 'boolean',
     ];
 
-    public function Questions()
+    public function questions()
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class)->orderBy('orderNo');
     }
 }

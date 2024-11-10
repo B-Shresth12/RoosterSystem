@@ -14,10 +14,25 @@ class SurveyRepository implements SurveyRepositoryInterface
         return Survey::orderBy('order_no')->get();
     }
 
-    public function create(array $data): Survey
+    public function create(array $data): array
     {
         $data['is_active'] = $data['active_status'];
-        return Survey::create($data);
+        try {
+            $status = Survey::create($data);
+            if ($status) {
+                return [
+                    'status' => true,
+                    'survey' => $status
+                ];
+            }
+        } catch (Exception $e) {
+            Log::error("SERVER ERROR::::{$e->getMessage()} on {$e->getFile()} line no: {$e->getLine()}");
+        }
+
+        return [
+            'status' => false,
+            'message' => "Something went wrong"
+        ];
     }
 
     public function destroy($id): bool
