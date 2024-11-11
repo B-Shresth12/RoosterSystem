@@ -51,6 +51,37 @@ class QuestionRepository implements QuestionRepositoryInterface
         ];
     }
 
+    public function addQuestion($data, $surveyId): array
+    {
+        try {
+            $status = Question::create([
+                'survey_id' => $surveyId,
+                'order_no' => Question::where([
+                    'survey_id' => $surveyId,
+                    'parent_id' => $data['question_section']
+                ])->max('order_no') + 1,
+                'text' => $data['question'],
+                'status' => $data['active_status'],
+                'description' => $data['description'],
+                'question_type' => $data['question_type'],
+            ]);
+
+            if ($status) {
+                return [
+                    'status' => true,
+                    'message' => 'Question has been added',
+                ];
+            }
+        } catch (Exception $e) {
+            Log::error("SERVER ERROR::::{$e->getMessage()} on {$e->getFile()} line no: {$e->getLine()}");
+        }
+
+        return [
+            'status' => false,
+            'message' => 'Something went wrong',
+        ];
+    }
+
     public function editSection($data, $surveyId, $sectionId): array
     {
 

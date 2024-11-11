@@ -3,11 +3,13 @@ import Header from '@/Components/Header';
 import PrimaryButton from '@/Components/PrimaryButton';
 import PrimaryLinkButton from '@/Components/PrimaryLinkButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
 import Nestable from 'react-nestable';
 import 'react-nestable/dist/styles/index.css';
 
 const Index = ({ surveyId, questions }) => {
+    const [list, setList] = useState(questions);
     const goBackLink = route('admin.surveys.index');
     const addSection = route('admin.questions.create', {
         surveyId: surveyId,
@@ -46,20 +48,40 @@ const Index = ({ surveyId, questions }) => {
                         {item.status ? 'Active' : 'In Active'}
                     </div>
                 </div>
-                <div className="flex gap-2 justify-center items-center">
-                    <PrimaryButton type={`button`} >
+                <div className="flex items-center justify-center gap-2">
+                    <PrimaryButton type={`button`}>
                         <i className="fa fa-plus"></i>
                     </PrimaryButton>
                     <PrimaryLinkButton href={getEditUrl(item)}>
                         <i className="fa fa-edit"></i>
                     </PrimaryLinkButton>
-                    <DangerButton type={`button`}>
+                    <DangerButton
+                        type={`button`}
+                        onClick={(e) => handleDelete(item.id)}
+                    >
                         <i className="fa fa-trash"></i>
                     </DangerButton>
                 </div>
             </div>
         </div>
     );
+
+    const handleDelete = async (id) => {
+        if (confirm('Are you sure you want to delete this data?')) {
+            try {
+                await router.delete(
+                    route('admin.questions.destroy', {
+                        surveyId: surveyId,
+                        question: id,
+                    }),
+                );
+                setList(list.filter((list) => list.id !== id));
+                // console.table(list)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
     return (
         <AuthenticatedLayout header={<Header title={`Question Management`} />}>
             <Head title={`Question Management`} />
@@ -94,7 +116,7 @@ const Index = ({ surveyId, questions }) => {
                                 </div>
                             </header>
                             <Nestable
-                                items={questions}
+                                items={list}
                                 renderItem={renderItem}
                             />
                         </div>

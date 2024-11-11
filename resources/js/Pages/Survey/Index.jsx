@@ -43,9 +43,7 @@ const Index = ({ surveys }) => {
         return route('admin.surveys.edit', id);
     };
     return (
-        <AuthenticatedLayout
-            header={<Header title={`Survey Management`} />}
-        >
+        <AuthenticatedLayout header={<Header title={`Survey Management`} />}>
             <Head title="Survey Management" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

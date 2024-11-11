@@ -5,3 +5,10 @@ export function arrayMatch(...arr) {
 
     return allMatch;
 }
+
+export function parseQuestionType(name) {
+    return name
+        .toLowerCase() // Convert to lowercase: "multiple_answer"
+        .replace(/_/g, ' ') // Replace underscores with spaces: "multiple answer"
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}

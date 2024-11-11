@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Admin\AddQuestionRequest;
 use App\Http\Requests\Admin\SectionRequest;
 use App\Repositories\Question\QuestionRepositoryInterface;
 
@@ -22,5 +23,10 @@ class QuestionService
     function editSection(SectionRequest $request, $surveyId, $sectionId)
     {
         return $this->questionRepository->editSection($request->validated(), $surveyId, $sectionId);
+    }
+
+    function createQuestion($surveyId, AddQuestionRequest $request)
+    {
+        return $this->questionRepository->addQuestion($request->validated(), $surveyId);
     }
 }

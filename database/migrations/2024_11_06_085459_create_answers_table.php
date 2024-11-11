@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('question_id')->references('id')->on('questions')->onDelete('cascade');
             $table->string('answer_text');
-            $table->integer('answer_order')->default(0);
+            $table->integer('order_no')->default(0);
             $table->timestamps();
         });
     }

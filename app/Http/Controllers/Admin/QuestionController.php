@@ -9,12 +9,9 @@ use App\Models\Survey;
 use App\Services\QuestionService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-enum Mode: string
-{
-    case ROW = "section";
-    case CHILD = "question";
-}
+use App\Enums\Mode;
+use App\Enums\QuestionType;
+use App\Http\Requests\Admin\AddQuestionRequest;
 
 class QuestionController extends Controller
 {
@@ -55,8 +52,15 @@ class QuestionController extends Controller
         //rendering the inertia page according to the
         return match ($mode) {
             MODE::ROW->value => Inertia::render('Question/SectionForm', compact('surveyId')),
-            MODE::CHILD->value => dd('question'),
+            MODE::CHILD->value => $this->renderQuestionForm($surveyId),
         };
+    }
+
+    private function renderQuestionForm($surveyId)
+    {
+        $questionTypes = array_column(QuestionType::cases(), 'name');
+        $sections = Question::where(['parent_id' => null, 'question_type' => null])->orderBy('order_no')->get();
+        return Inertia::render('Question/QuestionForm', compact('surveyId', 'sections', 'questionTypes'));
     }
 
     /**
@@ -84,7 +88,10 @@ class QuestionController extends Controller
                     SectionRequest::class
                 )
             ),
-            MODE::CHILD->value => dd('question'),
+            MODE::CHILD->value => $this->questionService->createQuestion(
+                surveyId: $surveyId,
+                request: app(AddQuestionRequest::class)
+            ),
         };
 
         if ($status['status']) {
@@ -168,8 +175,10 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($surveyId, $question)
     {
-        //
+        Question::destroy($question);
+
+        return to_route('admin.questions.index', $surveyId)->with('success', "Data has been deleted");
     }
 }

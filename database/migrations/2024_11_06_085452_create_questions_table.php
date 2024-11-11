@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('question_type')->nullable();
             $table->boolean('is_mandatory')->default(false);
-            
+            $table->boolean('add_others_section')->default(0);
             $table->foreign('parent_id')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();
         });
