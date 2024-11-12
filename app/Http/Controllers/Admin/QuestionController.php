@@ -23,6 +23,7 @@ class QuestionController extends Controller
     public function index(string $surveyId)
     {
         $response = $this->questionService->getQuestions(surveyId: $surveyId);
+        // dd($response);
 
         if ($response['status']) {
             $questions = $response['questions'];

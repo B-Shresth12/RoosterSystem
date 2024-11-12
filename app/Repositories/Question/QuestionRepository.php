@@ -60,6 +60,7 @@ class QuestionRepository implements QuestionRepositoryInterface
                     'survey_id' => $surveyId,
                     'parent_id' => $data['question_section']
                 ])->max('order_no') + 1,
+                'parent_id' => $data['question_section'],
                 'text' => $data['question'],
                 'status' => $data['active_status'],
                 'description' => $data['description'],
